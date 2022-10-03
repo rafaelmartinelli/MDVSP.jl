@@ -3,6 +3,8 @@ using MDVSP
 using JuMP
 using Gurobi
 
+using Printf
+
 function main()
     data = loadMDVSP("m4n500s0")
 
@@ -16,7 +18,7 @@ function main()
 
     @variable(model, x[i in V, j in V, d in D; existsArc(D, c, i, j, d)], Bin)
 
-    @objective(model, Min, sum(c[i, j]x[i, j, d] for i in V, j in V, d in D if existsArc(D, c, i, j, d)))
+    @objective(model, Min, sum(c[i, j]x[i, j, d] for i in V, j in V, d in D if existsArc(D, c, i, j, d)) + sum(c[i, i] for i in T))
 
     @constraint(model, from[i in T], sum(x[i, j, d] for j in V, d in D if existsArc(D, c, i, j, d)) == 1)
     @constraint(model, to[j in T], sum(x[i, j, d] for i in V, d in D if existsArc(D, c, i, j, d)) == 1)
@@ -28,11 +30,13 @@ function main()
     optimize!(model)
     println(termination_status(model))
 
-    println("z = ", objective_value(model))
+    @printf("z = %.0f\n", objective_value(model))
+
+    return data
 end
 
 function existsArc(D::Vector{Int64}, c::Matrix{Int64}, i::Int64, j::Int64, d::Int64)
     return c[i, j] != -1 && (i > length(D) || i == d) && (j > length(D) || j == d)
 end
 
-main()
+data = main()

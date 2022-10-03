@@ -2,7 +2,3 @@ name = "MDVSP"
 uuid = "5b395b90-4325-11ed-18b2-9dae985d7d42"
 authors = ["Rafael Martinelli"]
 version = "1.0.0"
-
-[deps]
-Gurobi = "2e9cd046-0924-5485-92f1-d5272153d98b"
-JuMP = "4076af6c-e467-56ae-b986-b466b2749572"
