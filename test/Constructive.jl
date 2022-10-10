@@ -1,30 +1,18 @@
-# To run:
-#   1. Open Julia terminal (Alt + j, Alt + o)
-#   2. Activate test with "] activate test"
-#   3. Run the source file
-
-using MDVSP
-using Graphs
-
-include("Solution.jl")
-
-instance_name = "m4n500s0"
-
 function buildGraph(data::Data)
-    G = SimpleDiGraph(length(data.vertices))
+    graph = SimpleDiGraph(length(data.vertices))
     for i in data.vertices
         for j in data.vertices
             if data.costs[i, j] != -1 && i ∉ data.depots && j ∉ data.depots
-                add_edge!(G, i, j)
+                add_edge!(graph, i, j)
             end
         end
     end
 
-    return G
+    return graph
 end
 
 function constructive(data::Data, graph::SimpleDiGraph)
-    routes = Vector{Route}()
+    routes = [ Vector{Route}() for _ in data.depots ]
     vehicles = zeros(Int64, length(data.depots))
 
     id = 0
@@ -56,7 +44,7 @@ function constructive(data::Data, graph::SimpleDiGraph)
         end
         cost += data.costs[vertices[end], depot]
         push!(vertices, depot)
-        push!(routes, Route(id, cost, vertices))
+        push!(routes[depot], Route(id, cost, vertices))
 
         total_cost += cost
         top_sort = deepcopy(not_used)
@@ -64,7 +52,3 @@ function constructive(data::Data, graph::SimpleDiGraph)
 
     return Solution(total_cost, routes)
 end
-
-data = loadMDVSP(instance_name)
-graph = buildGraph(data)
-solution = constructive(data, graph)

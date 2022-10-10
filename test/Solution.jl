@@ -18,9 +18,9 @@ end
 
 struct Solution
     cost::Int64
-    routes::Vector{Route}
+    routes::Vector{Vector{Route}}
 
-    function Solution(cost::Int64 = 0, routes::Vector{Route} = Route[])
+    function Solution(cost::Int64 = 0, routes::Vector{Vector{Route}} = Route[])
         return new(cost, routes)
     end
 end
@@ -28,6 +28,6 @@ end
 function Base.show(io::IO, solution::Solution)
     print(io,
         "MDVSP Solution (c = ", solution.cost,
-        ", ", length(solution.routes), " routes)"
+        ", ", sum(length.(solution.routes)), " routes)"
     )
 end
