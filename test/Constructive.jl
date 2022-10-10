@@ -6,26 +6,9 @@
 using MDVSP
 using Graphs
 
-instance_name = "m4n500s1"
+include("Solution.jl")
 
-function topSort(G::SimpleDiGraph, node::Int64, marked::Vector{Bool}, res::Vector{Int64})
-    if marked[node] return end
-    marked[node] = true
-    for n in outneighbors(G, node)
-        topSort(G, n, marked, res)
-    end
-    push!(res, node)
-end
-
-function topSort(G::SimpleDiGraph)
-    marked = zeros(Bool, length(data.vertices))
-    res = []
-    for i in data.vertices
-        if marked[i] continue end
-        topSort(G, i, marked, res)
-    end
-    return reverse(res)
-end
+instance_name = "m4n500s0"
 
 function buildGraph(data::Data)
     G = SimpleDiGraph(length(data.vertices))
@@ -40,43 +23,48 @@ function buildGraph(data::Data)
     return G
 end
 
-function constructive(data::Data, G::SimpleDiGraph)
-    solution = []
+function constructive(data::Data, graph::SimpleDiGraph)
+    routes = Vector{Route}()
     vehicles = zeros(Int64, length(data.depots))
 
-    total = 0
-    nodes = topSort(G)
-    while length(nodes) > 0
+    id = 0
+    total_cost = 0
+    top_sort = topological_sort_by_dfs(graph)
+    while length(top_sort) > 0
         depot = 0
         for d in data.depots
             if vehicles[d] == data.vehicles[d] continue end
-            if data.costs[d, nodes[1]] == -1 continue end
-            if depot == 0 || data.costs[d, nodes[1]] < data.costs[depot, nodes[1]]
+            if data.costs[d, top_sort[1]] == -1 continue end
+            if depot == 0 || data.costs[d, top_sort[1]] < data.costs[depot, top_sort[1]]
                 depot = d
             end
         end
         if depot == 0 break end
         vehicles[depot] += 1
 
-        route = [ depot ]
-        notUsed = Vector{Int64}()
-        for n in nodes
-            if data.costs[route[end], n] != -1 && n ∉ data.depots
-                total += data.costs[route[end], n]
-                push!(route, n)
+        id += 1
+        cost = 0
+        vertices = [ depot ]
+        not_used = Vector{Int64}()
+        for n in top_sort
+            if data.costs[vertices[end], n] != -1 && n ∉ data.depots
+                cost += data.costs[vertices[end], n]
+                push!(vertices, n)
             else
-                push!(notUsed, n)
+                push!(not_used, n)
             end
         end
-        total += data.costs[route[end], depot]
-        push!(route, depot)
-        push!(solution, route)
+        cost += data.costs[vertices[end], depot]
+        push!(vertices, depot)
+        push!(routes, Route(id, cost, vertices))
 
-        nodes = deepcopy(notUsed)
+        total_cost += cost
+        top_sort = deepcopy(not_used)
     end
 
-    return total, solution
+    return Solution(total_cost, routes)
 end
 
 data = loadMDVSP(instance_name)
-total, solution = main(data)
+graph = buildGraph(data)
+solution = constructive(data, graph)

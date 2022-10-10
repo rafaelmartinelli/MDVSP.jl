@@ -1,5 +1,5 @@
-function loadMDVSP(file_name::String)
-    raw = split(read(joinpath(data_path, file_name * ".inp"), String))
+function loadMDVSP(name::String)
+    raw = split(read(joinpath(data_path, name * ".inp"), String))
 
     num_depots = parse(Int64, raw[1])
     depots = collect(1:num_depots)
@@ -14,5 +14,9 @@ function loadMDVSP(file_name::String)
     costs = parse.(Int64, raw[(num_depots + 3):end])
     costs = transpose(reshape(costs, num_vertices, num_vertices))
 
-    return Data(depots, tasks, vertices, vehicles, costs)
+    return Data(depots, tasks, vertices, vehicles, costs, name, 0, 0)
+end
+
+function loadBounds(name::String)
+    return 0, typemax(Int64)
 end
