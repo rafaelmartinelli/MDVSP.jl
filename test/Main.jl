@@ -2,21 +2,26 @@ using MDVSP
 using Graphs
 using JuMP
 using Gurobi
+using Printf
 
 include("Solution.jl")
 include("Constructive.jl")
-include("decomposition/Master.jl")
+include("decomposition/MasterFormulation.jl")
+include("decomposition/Pricing.jl")
+include("decomposition/ColumnGeneration.jl")
 
 instance_name = "m4n500s0"
+algo_type = :Constructive
 
 data = loadMDVSP(instance_name)
 println(data)
 
-graph = buildGraph(data)
-solution = constructive(data, graph)
-println("Constructive = ", solution)
+if algo_type == :Constructive
+    algo = Constructive(data)
+elseif algo_type == :ColumnGeneration
+    algo = ColumnGeneration(data)
+else
+    @error("Unknown algorithm.")
+end
 
-model = buildModel(data, solution.routes)
-set_silent(model)
-optimize!(model)
-println("z = ", objective_value(model))
+solve!(algo)

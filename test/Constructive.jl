@@ -1,4 +1,14 @@
-function buildGraph(data::Data)
+mutable struct Constructive
+    data::Data
+    graph::SimpleDiGraph
+    solution::Solution
+
+    function Constructive(data::Data)
+        return new(data, buildGraph(data), Solution())
+    end
+end
+
+function buildGraph(data::Data)::SimpleDiGraph
     graph = SimpleDiGraph(length(data.vertices))
     for i in data.vertices
         for j in data.vertices
@@ -11,13 +21,13 @@ function buildGraph(data::Data)
     return graph
 end
 
-function constructive(data::Data, graph::SimpleDiGraph)
+function solve!(constructive::Constructive)
     routes = [ Vector{Route}() for _ in data.depots ]
     vehicles = zeros(Int64, length(data.depots))
 
     id = 0
     total_cost = 0
-    top_sort = topological_sort_by_dfs(graph)
+    top_sort = topological_sort_by_dfs(constructive.graph)
     while length(top_sort) > 0
         depot = 0
         for d in data.depots
@@ -50,5 +60,6 @@ function constructive(data::Data, graph::SimpleDiGraph)
         top_sort = deepcopy(not_used)
     end
 
-    return Solution(total_cost, routes)
+    constructive.solution = Solution(total_cost, routes)
+    println("Constructive => ", constructive.solution)
 end

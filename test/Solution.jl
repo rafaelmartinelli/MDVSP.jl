@@ -20,7 +20,7 @@ struct Solution
     cost::Int64
     routes::Vector{Vector{Route}}
 
-    function Solution(cost::Int64 = 0, routes::Vector{Vector{Route}} = Route[])
+    function Solution(cost::Int64 = 0, routes::Vector{Vector{Route}} = Vector{Vector{Route}}())
         return new(cost, routes)
     end
 end
