@@ -14,9 +14,17 @@ function loadMDVSP(name::String)
     costs = parse.(Int64, raw[(num_depots + 3):end])
     costs = transpose(reshape(costs, num_vertices, num_vertices))
 
-    return Data(depots, tasks, vertices, vehicles, costs, name, 0, 0)
+    return Data(depots, tasks, vertices, vehicles, costs, name, loadBounds(name)...)
 end
 
 function loadBounds(name::String)
-    return 0, typemax(Int64)
+    file_name = joinpath(data_path, "bounds.txt")
+    values = split(read(file_name, String))
+
+    index = findfirst(isequal(name), values)
+    if index !== nothing
+        return parse(Int64, values[index + 1]), parse(Int64, values[index + 2])
+    else
+        return 0, 0
+    end
 end

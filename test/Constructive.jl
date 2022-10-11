@@ -25,7 +25,6 @@ function solve!(constructive::Constructive)
     routes = [ Vector{Route}() for _ in data.depots ]
     vehicles = zeros(Int64, length(data.depots))
 
-    id = 0
     total_cost = 0
     top_sort = topological_sort_by_dfs(constructive.graph)
     while length(top_sort) > 0
@@ -40,7 +39,6 @@ function solve!(constructive::Constructive)
         if depot == 0 break end
         vehicles[depot] += 1
 
-        id += 1
         cost = 0
         vertices = [ depot ]
         not_used = Vector{Int64}()
@@ -54,7 +52,7 @@ function solve!(constructive::Constructive)
         end
         cost += data.costs[vertices[end], depot]
         push!(vertices, depot)
-        push!(routes[depot], Route(id, cost, vertices))
+        push!(routes[depot], Route(cost, vertices))
 
         total_cost += cost
         top_sort = deepcopy(not_used)

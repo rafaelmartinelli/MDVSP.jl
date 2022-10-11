@@ -1,17 +1,15 @@
 struct Route
-    id::Int64
     cost::Int64
     vertices::Vector{Int64}
 
-    function Route(id::Int64 = 0, cost::Int64 = 0, vertices::Vector{Int64} = Int64[])
-        return new(id, cost, vertices)
+    function Route(cost::Int64 = 0, vertices::Vector{Int64} = Int64[])
+        return new(cost, vertices)
     end
 end
 
 function Base.show(io::IO, route::Route)
     print(io,
-        "R[", route.id,
-        "] (d = ", (length(route.vertices) == 0 ? "?" : route.vertices[1]),
+        "R(d = ", (length(route.vertices) == 0 ? "?" : route.vertices[1]),
         ", c = ", route.cost, ")"
     )
 end

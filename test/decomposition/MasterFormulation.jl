@@ -35,7 +35,7 @@ function solve!(master::MasterFormulation)
 
     if termination_status(master.model) != OPTIMAL
         @error("The model was not solved correctly.")
-        return nothing
+        return
     end
 
     if master.is_integral
