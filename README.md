@@ -58,3 +58,5 @@ Open Julia's interactive session (REPL) and type:
 - [AssignmentProblems.jl](https://github.com/rafaelmartinelli/AssignmentProblems.jl): Assignment Problems Lib
 - [BPPLib.jl](https://github.com/rafaelmartinelli/BPPLib.jl): Bin Packing and Cutting Stock Problems Lib
 - [CARPData.jl](https://github.com/rafaelmartinelli/CARPData.jl): Capacitated Arc Routing Problem Lib
+- [CVRPLIB.jl](https://github.com/chkwon/CVRPLIB.jl): Capacitated Vehicle Routing Problem Lib
+- [TSPLIB.jl](https://github.com/matago/TSPLIB.jl): Traveling Salesman Problem Lib
