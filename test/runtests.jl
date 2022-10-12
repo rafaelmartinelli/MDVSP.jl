@@ -14,8 +14,8 @@ using Test
     @test size(data.costs) == (52, 52)
     @test data.costs[20, 44] == 423
     @test data.name == "n50m2s0"
-    @test data.lb == 0
-    @test data.ub == typemax(Int64)
+    @test data.lb == 214727
+    @test data.ub == 214727
     @test_nowarn println(data)
 end
 
