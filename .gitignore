@@ -1,3 +1,4 @@
 Manifest.toml
 *.lp
 .vscode/settings.json
+data/Mdvsp_*dep_*trips.zip

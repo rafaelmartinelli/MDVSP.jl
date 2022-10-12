@@ -13,8 +13,8 @@ include("decomposition/MasterFormulation.jl")
 include("decomposition/Pricing.jl")
 include("decomposition/ColumnGeneration.jl")
 
-instance_name = "m4n500s0"
-algo_type = :CompactFormulation
+instance_name = "n50m2s0"
+algo_type = :Constructive
 
 data = loadMDVSP(instance_name)
 println(data)
@@ -26,7 +26,7 @@ elseif algo_type == :Constructive
 elseif algo_type == :ColumnGeneration
     algo = ColumnGeneration(data)
 else
-    @error("Unknown algorithm.")
+    error("Unknown algorithm.")
 end
 
 solve!(algo)

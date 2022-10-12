@@ -34,7 +34,7 @@ function solve!(master::MasterFormulation)
     optimize!(master.model)
 
     if termination_status(master.model) != OPTIMAL
-        @error("The model was not solved correctly.")
+        error("The model was not solved correctly.")
         return
     end
 

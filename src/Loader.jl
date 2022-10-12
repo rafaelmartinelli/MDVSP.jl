@@ -1,6 +1,36 @@
 function loadMDVSP(name::String)
-    raw = split(read(joinpath(data_path, name * ".inp"), String))
+    real_name = name * ".inp"
+    zip_name = name * ".zip"
+    abs_zip_name = joinpath(data_path, zip_name)
+    if !isfile(abs_zip_name)
+        regex = r"m(\d+)n(\d+)s(\d+)"
+        regex_values = match(regex, name)
+        if regex_values === nothing || length(regex_values) < 2
+            @error("Unknown instance: $name")
+            return nothing
+        end
 
+        zip_name = "Mdvsp_" * regex_values[1] * "dep_" * regex_values[2] * "trips.zip"
+        abs_zip_name = joinpath(data_path, zip_name)
+        if !isfile(abs_zip_name)
+            if !downloadFile(zip_name) return nothing end
+        end
+    end
+
+    zip_file = ZipFile.Reader(abs_zip_name)
+    pos = findfirst(x -> x.name == real_name, zip_file.files)
+    if pos === nothing
+        close(zip_file)
+        @error("Instance $real_name not found in zip file $zip_name")
+        return nothing
+    end
+    
+    raw = split(read(zip_file.files[pos], String))
+    close(zip_file)
+    return parseData(name, raw)
+end
+
+function parseData(name::String, raw::Vector{SubString{String}})
     num_depots = parse(Int64, raw[1])
     depots = collect(1:num_depots)
 
@@ -25,6 +55,6 @@ function loadBounds(name::String)
     if index !== nothing
         return parse(Int64, values[index + 1]), parse(Int64, values[index + 2])
     else
-        return 0, 0
+        return 0, typemax(Int64)
     end
 end
