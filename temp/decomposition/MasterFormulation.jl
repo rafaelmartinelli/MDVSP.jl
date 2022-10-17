@@ -23,8 +23,8 @@ function buildModel(data::Data, routes::Vector{Vector{Route}}, is_integral::Bool
         @variable(model, λ[d in D, r in R[d]] >= 0)
     end
     @objective(model, Min, sum(routes[d][r].cost * λ[d, r] for d in D, r in R[d]))
-    @constraint(model, [t in T], sum(λ[d, r] for d in D, r in R[d] if t in routes[d][r].vertices) == 1)
-    @constraint(model, [d in D], sum(λ[d, r] for r in R[d]) <= data.vehicles[d])
+    @constraint(model, task[t in T], sum(λ[d, r] for d in D, r in R[d] if t in routes[d][r].vertices) == 1)
+    @constraint(model, depot[d in D], sum(λ[d, r] for r in R[d]) <= data.vehicles[d])
 
     return model
 end
@@ -52,6 +52,19 @@ function solve!(master::MasterFormulation)
     else
         @printf("Master = %.2f\n", objective_value(master.model))
     end
+end
+
+function getDuals(master::MasterFormulation)
+    π = zeros(Float64, length(master.data.vertices))
+    for v in master.data.vertices
+        if isDepot(master.data, v)
+            π[v] = dual(master.model[:depot][v])
+        else
+            π[v] = dual(master.model[:task][v])
+        end
+    end
+
+    return π
 end
 
 function add!(master::MasterFormulation, routes::Vector{Vector{Route}})

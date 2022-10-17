@@ -16,4 +16,10 @@ end
 
 function solve!(col_gen::ColumnGeneration)
     solve!(col_gen.master)
+
+    duals = getDuals(col_gen.master)
+    routes, red_cost = solve!(col_gen.pricing, duals)
+
+    #TODO
+    add!(col_gen.master, routes)
 end

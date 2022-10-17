@@ -7,6 +7,7 @@ using Printf
 const EPS = 1e-5
 
 include("Solution.jl")
+include("TopologicalSort.jl")
 include("CompactFormulation.jl")
 include("Constructive.jl")
 include("decomposition/MasterFormulation.jl")
@@ -14,7 +15,7 @@ include("decomposition/Pricing.jl")
 include("decomposition/ColumnGeneration.jl")
 
 instance_name = "n50m2s0"
-algo_type = :Constructive
+algo_type = :ColumnGeneration
 
 data = loadMDVSP(instance_name)
 println(data)
@@ -29,4 +30,4 @@ else
     error("Unknown algorithm.")
 end
 
-solve!(algo)
+routes, red_cost = solve!(algo)
