@@ -15,11 +15,19 @@ mutable struct ColumnGeneration
 end
 
 function solve!(col_gen::ColumnGeneration)
+    while true
+        solve!(col_gen.master)
+
+        duals = getDuals(col_gen.master)
+        routes, red_cost = solve!(col_gen.pricing, duals)
+
+        println("Best RC = ", red_cost)
+
+        if red_cost > -EPS break end
+
+        add!(col_gen.master, routes)
+    end
+
+    col_gen.master.model = buildModel(col_gen.data, col_gen.master.routes, true)
     solve!(col_gen.master)
-
-    duals = getDuals(col_gen.master)
-    routes, red_cost = solve!(col_gen.pricing, duals)
-
-    #TODO
-    add!(col_gen.master, routes)
 end

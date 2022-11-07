@@ -29,7 +29,7 @@ end
 
 function solve!(formulation::CompactFormulation)
     # write_to_file(model, instance_name * ".lp")
-    set_optimizer_attribute(formulation.model, "TimeLimit", 360)
+    set_optimizer_attribute(formulation.model, "TimeLimit", 600)
     set_optimizer_attribute(formulation.model, "MIPGap", 1e-6)
     optimize!(formulation.model)
     

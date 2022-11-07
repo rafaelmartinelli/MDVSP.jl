@@ -14,7 +14,7 @@ include("decomposition/MasterFormulation.jl")
 include("decomposition/Pricing.jl")
 include("decomposition/ColumnGeneration.jl")
 
-instance_name = "n50m2s0"
+instance_name = "m4n500s0"
 algo_type = :ColumnGeneration
 
 data = loadMDVSP(instance_name)
@@ -30,4 +30,4 @@ else
     error("Unknown algorithm.")
 end
 
-routes, red_cost = solve!(algo)
+solve!(algo)

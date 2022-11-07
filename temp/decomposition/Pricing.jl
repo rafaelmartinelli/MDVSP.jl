@@ -15,8 +15,6 @@ function solve!(pricing::Pricing, duals::Vector{Float64})
         red_costs = zeros(Float64, length(pricing.data.vertices))
         parents = collect(1:length(pricing.data.vertices))
 
-        println(parents)
-
         for t in pricing.data.tasks
             red_costs[t] = pricing.data.costs[d, t] - duals[d] - duals[t]
             parents[t] = d
@@ -35,6 +33,7 @@ function solve!(pricing::Pricing, duals::Vector{Float64})
             end
         end
 
+        routes_red_costs = Float64[]
         for t in pricing.data.tasks
             new_red_cost = red_costs[t] + pricing.data.costs[t, d]
             if new_red_cost < -EPS
@@ -55,12 +54,22 @@ function solve!(pricing::Pricing, duals::Vector{Float64})
                 push!(vertices, d)
 
                 push!(routes[d], Route(cost, vertices))
+                push!(routes_red_costs, new_red_cost)
             end
 
             if new_red_cost - best_red_cost < -EPS
                 best_red_cost = new_red_cost
             end
         end
+
+        indexes = sortperm(routes_red_costs)
+        new_routes = Route[]
+        for r in 1:length(routes[d])
+            if indexes[r] <= 20
+                push!(new_routes, routes[d][r])
+            end
+        end
+        routes[d] = new_routes
     end
 
     return routes, best_red_cost

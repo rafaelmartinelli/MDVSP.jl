@@ -68,5 +68,8 @@ function getDuals(master::MasterFormulation)
 end
 
 function add!(master::MasterFormulation, routes::Vector{Vector{Route}})
-
+    for d in master.data.depots
+        append!(master.routes[d], routes[d])
+    end
+    master.model = buildModel(master.data, master.routes, false)
 end
